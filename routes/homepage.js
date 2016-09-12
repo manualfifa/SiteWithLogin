@@ -18,7 +18,7 @@ router.post('/register', function (req, res){
 		    return res.render('./partials/register');
 	    }
 	    passport.authenticate("local")(req, res, function(){
-		    res.redirect("./partials/secret");
+		    res.redirect("/");
 	    });
     });
 });
