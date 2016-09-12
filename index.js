@@ -8,9 +8,11 @@ var express                 = require('express'),
     mongoose                = require('mongoose'),
     methodOverride          = require('method-override');
     
+//--DEFINE-ROUTES--//
+var homepageRoutes          = require('./routes/homepage');
+    
 var connection = mongoose.connect('mongodb://localhost/userauth');
     
-
 var app = express();
 
 app.use(expressSession({
@@ -38,44 +40,9 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-//--ROUTES--//
+//--USE-ROUTES--//
+app.use(homepageRoutes);
 
-app.get('/', function (req, res) {
-    console.log(siteConfig);
-   res.render("./partials/home"); 
-});
-
-app.get('/register', function (req, res){
-    res.render("./partials/register");
-});
-
-app.post('/register', function (req, res){
-    User.register(new User({username: req.body.username}), req.body.password, function (err, user){
-        if(err){
-		    console.log(err);
-		    return res.render('./partials/register');
-	    }
-	    passport.authenticate("local")(req, res, function(){
-		    res.redirect("./partials/secret");
-	    });
-    });
-});
-   
-
-app.get('/login', function (req,res){
-    res.render("./partials/login");
-});
-
-app.post('/login', passport.authenticate("local", {
-	successRedirect: "/",
-	failureRedirect: "/login"
-}), function(req, res){
-});
-
-app.get('/logout', function(req,res){
-    req.logout();
-    res.redirect('/');
-});
 
 function isLoggedIn(req, res, next){
     if(req.isAuthenticated()) {
